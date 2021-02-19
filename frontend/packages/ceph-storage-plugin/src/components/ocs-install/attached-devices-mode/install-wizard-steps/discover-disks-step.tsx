@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Form, TextVariants } from '@patternfly/react-core';
+import { Form } from '@patternfly/react-core';
 import { LocalVolumeDiscoveryBody } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/body';
-import { LocalVolumeDiscoveryHeader } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/header';
 import { hasNoTaints, hasOCSTaint } from '../../../../utils/install';
 import { RequestErrors } from '../../install-wizard/review-and-create';
 import { Action } from '../reducer';
@@ -37,7 +36,6 @@ export const DiscoverDisks: React.FC<DiscoverDisksProps> = ({
 
   return (
     <>
-      <LocalVolumeDiscoveryHeader className="ocs-install-wizard__h3" variant={TextVariants.h3} />
       <Form noValidate={false} className="ceph-ocs-install__auto-detect-table">
         <LocalVolumeDiscoveryBody
           allNodes={allNodes}

@@ -14,11 +14,11 @@ export const arbiterText = (t: TFunction) =>
   );
 export const attachDevices = (t: TFunction) =>
   t(
-    'ceph-storage-plugin~Selected nodes are based on the selected storage class. The selected nodes will preferably be in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node.',
+    'ceph-storage-plugin~The selected nodes are based on the storage class that you selected. The selected nodes are distributed in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node.',
   );
 export const attachDevicesWithArbiter = (t: TFunction) =>
   t(
-    'ceph-storage-plugin~Selected nodes are based on the selected storage class. 4 nodes in 2 different zones will be selected with a recommended requirement of 14 CPU and 34 GiB RAM per node.',
+    'ceph-storage-plugin~The selected nodes are based on the storage class that you selected. 4 nodes in 2 different zones will be selected with a recommended requirement of 14 CPU and 34 GiB RAM per node.',
   );
 export const encryptionTooltip =
   'The storage cluster encryption level can be set to include all components under the cluster (including storage class and PVs) or to include only storage class encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.';

@@ -109,7 +109,7 @@ export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = (
   return (
     <FormGroup fieldId="arbiter-cluster" label={t('ceph-storage-plugin~Stretch Cluster')}>
       <Checkbox
-        aria-label={t('ceph-storage-plugin~Enable Arbiter')}
+        aria-label={t('ceph-storage-plugin~Enable arbiter')}
         id="arbiter-cluster"
         isChecked={stretchClusterChecked}
         label={<AdvancedSubscription prefix={t('ceph-storage-plugin~Enable arbiter')} />}
@@ -137,7 +137,7 @@ export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = (
         <Grid hasGutter>
           <GridItem span={5}>
             <FormGroup
-              label={t('ceph-storage-plugin~Select an arbiter zone')}
+              label={t('ceph-storage-plugin~Select arbiter zone')}
               fieldId="arbiter-zone-dropdown"
               className="ceph-ocs-install__select-arbiter-zone"
             >
