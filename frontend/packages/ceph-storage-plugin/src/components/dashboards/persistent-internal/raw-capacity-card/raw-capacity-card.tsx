@@ -10,11 +10,34 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
 import { CAPACITY_INFO_QUERIES } from '../../../../constants/queries';
+import {
+  DANGER,
+  WARNING,
+  DANGER_THRESHOLD,
+  WARNING_THRESHOLD,
+} from '../../common/capacity-breakdown/consts';
 import './raw-capacity-card.scss';
 
 const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();
 const colorScale = ['#0166cc', '#d6d6d6'];
+let capacityStatus = '';
+
+const setCapacityStatus = (capacityRatio) => {
+  if (capacityRatio > DANGER_THRESHOLD) {
+    capacityStatus = DANGER;
+    colorScale[0] = '#C9190B';
+  } else if (capacityRatio > WARNING_THRESHOLD && capacityRatio <= DANGER_THRESHOLD) {
+    capacityStatus = WARNING;
+    colorScale[0] = '#F0AB00';
+  } else {
+    capacityStatus = '';
+  }
+};
 
 // Enchance instantVectorStats to directly parse the values (else loading state won't be accurate)
 const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);
@@ -38,6 +61,9 @@ const RawCapacityCard: React.FC = React.memo(() => {
   // Adjusted units
   const usedCapacityAdjusted = humanizeBinaryBytes(usedCapacityMetric);
   const availableCapacityAdjusted = humanizeBinaryBytes(totalCapacityMetric - usedCapacityMetric);
+
+  const capacityRatio = usedCapacity.value / totalCapacity.value;
+  setCapacityStatus(capacityRatio);
 
   const donutData = [
     { x: 'Used', y: usedCapacity.value, string: usedCapacityAdjusted.string },
@@ -67,6 +93,7 @@ const RawCapacityCard: React.FC = React.memo(() => {
                 fill={colorScale[1]}
                 title={t('ceph-storage-plugin~Available')}
                 text={availableCapacityAdjusted.string}
+                showIcon
               />
             </div>
             <div className="ceph-raw-usage__item ceph-raw-usage__chart">
@@ -119,7 +146,13 @@ const ErrorCardBody: React.FC = () => {
   );
 };
 
-const ChartLegend: React.FC<ChartLegendProps> = ({ fill, title, text, titleClassName }) => (
+const ChartLegend: React.FC<ChartLegendProps> = ({
+  fill,
+  title,
+  text,
+  titleClassName,
+  showIcon,
+}) => (
   <div className="ceph-raw-card-legend__container">
     <div className="ceph-raw-card-legend__index-block">
       <div className="ceph-raw-card-legend__color-square" style={{ backgroundColor: fill }} />
@@ -128,6 +161,15 @@ const ChartLegend: React.FC<ChartLegendProps> = ({ fill, title, text, titleClass
     <div className="ceph-raw-card-legend__value-block">
       <div className="ceph-raw-card-legend__text">{text}</div>
     </div>
+    {showIcon === true ? (
+      <div className="ceph-raw-card-legend__icon-block">
+        {capacityStatus === DANGER ? (
+          <RedExclamationCircleIcon title="Error" />
+        ) : capacityStatus === WARNING ? (
+          <YellowExclamationTriangleIcon title="Warning" />
+        ) : null}
+      </div>
+    ) : null}
   </div>
 );
 
@@ -136,6 +178,7 @@ type ChartLegendProps = {
   text: string;
   title: string;
   titleClassName?: string;
+  showIcon?: boolean;
 };
 
 export default RawCapacityCard;

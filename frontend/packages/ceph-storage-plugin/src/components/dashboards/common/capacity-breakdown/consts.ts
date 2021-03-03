@@ -15,3 +15,7 @@ export const COLORMAP = [
 export const OTHER = 'Other';
 export const CLUSTERWIDE = 'Cluster-wide';
 export const BUCKETCLASSKIND = 'BucketClass';
+export const DANGER = 'Danger';
+export const WARNING = 'Warning';
+export const DANGER_THRESHOLD = 0.8;
+export const WARNING_THRESHOLD = 0.75;
