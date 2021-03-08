@@ -84,7 +84,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     enableFlexibleScaling,
   } = state;
 
-  let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
+  const scNodeNames: React.MutableRefObject<string[]> = React.useRef([]); // names of the nodes, backing the storage of selected storage class
 
   const { cpu, memory, zones } = getNodeInfo(nodes);
   const nodesCount: number = nodes.length;
@@ -100,10 +100,13 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     isFlexibleScalingSupported && enableFlexibleScaling,
   );
 
-  if (!pvLoadError && pvData.length && pvLoaded) {
-    const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, scName);
-    scNodeNames = getAssociatedNodes(pvs);
-  }
+  React.useEffect(() => {
+    if (!pvLoadError && pvData.length && pvLoaded) {
+      const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, scName);
+      scNodeNames.current = getAssociatedNodes(pvs);
+      dispatch({ type: 'setAvailablePvsCount', value: pvs.length });
+    }
+  }, [dispatch, pvData, pvLoaded, pvLoadError, scName]);
 
   React.useEffect(() => {
     const isMinimal: boolean = shouldDeployAsMinimal(cpu, memory, nodesCount);
@@ -171,6 +174,9 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
               }
               data-test-id="ceph-ocs-install-pvs-available-capacity"
               storageClass={storageClass}
+              data={pvData}
+              loaded={pvLoaded}
+              loadError={pvLoadError}
             />
           </GridItem>
           <GridItem span={7} />
@@ -194,7 +200,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
             ListComponent={AttachedDevicesNodeTable}
             hideLabelFilter
             hideNameLabelFilters
-            customData={{ filteredNodes: scNodeNames, setNodes, nodes }}
+            customData={{ filteredNodes: scNodeNames.current, setNodes, nodes }}
           />
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />

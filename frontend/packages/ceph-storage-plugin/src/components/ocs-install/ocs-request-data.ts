@@ -57,6 +57,9 @@ const MIN_DEVICESET_RESOURCES: ResourceConstraints = {
   },
 };
 
+export const getCount = (availablePvsCount: number, count: number): number =>
+  Math.floor(availablePvsCount / count) || 1;
+
 export const labelNodes = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
   const patch = [
     {
@@ -132,6 +135,7 @@ export const getOCSRequestData = (
   kmsEnable?: boolean,
   selectedArbiterZone?: string,
   stretchClusterChecked?: boolean,
+  availablePvsCount?: number,
 ): StorageClusterKind => {
   const scName: string = getName(storageClass);
   const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
@@ -144,9 +148,9 @@ export const getOCSRequestData = (
   }
   if (flexibleScaling) {
     deviceSetReplica = 1;
-    deviceSetCount = 3;
     isPortable = false;
   }
+  deviceSetCount = getCount(availablePvsCount, deviceSetReplica);
 
   const requestData: StorageClusterKind = {
     apiVersion: 'ocs.openshift.io/v1',
